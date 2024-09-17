@@ -7,7 +7,7 @@ func main() {
 
 	fmt.Println("Welcome to Mango's Bank!")
 
-	// execute the code indefinitely
+	// for loop to execute the code indefinitely
 	for {
 		fmt.Println("What do you want to do?")
 		fmt.Println("1. Check Balance")
@@ -20,11 +20,12 @@ func main() {
 		fmt.Print("Your choice: ")
 		fmt.Scan(&choice)
 
-		// wantsCheckBalance := choice == 1
-
-		if choice == 1 { // view user's balance
+		// wantsCheckBalance := choice == 1\
+		switch choice {
+		case 1:
 			fmt.Println("Your balance is", accountBalance)
-		} else if choice == 2 { // deposit amount into user's balance
+			newLine()
+		case 2:
 			fmt.Print("Your deposit: ")
 			var depositAmount float64
 			fmt.Scan(&depositAmount)
@@ -37,7 +38,7 @@ func main() {
 			accountBalance += depositAmount
 			fmt.Println("Balance updated! New amount:", accountBalance)
 			newLine()
-		} else if choice == 3 { // withdraw amount from user's balance
+		case 3:
 			fmt.Print("Your withdrawal: ")
 			var withdrawalAmount float64
 			fmt.Scan(&withdrawalAmount)
@@ -53,14 +54,14 @@ func main() {
 			}
 			accountBalance -= withdrawalAmount
 			fmt.Println("Balance updated! New amount:", accountBalance)
-			newLine()
-		} else { // exit program
+		default:
 			fmt.Println("Goodbye!")
-			break
-		}
-	}
+			fmt.Println("Thanks for choosing our bank!")
 
-	fmt.Println("Thanks for choosing our bank!")
+			return
+		}
+
+	}
 
 }
 
