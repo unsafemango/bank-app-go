@@ -1,9 +1,22 @@
 package main
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+	"os"
+	"strconv"
+)
+
+const accountBalanceFile = "balance.txt"
 
 func main() {
-	var accountBalance = 1000.00
+	var accountBalance, err = getBalanceFromFile()
+
+	if err != nil {
+		fmt.Println("ERROR")
+		fmt.Println(err)
+		fmt.Println("---------")
+	}
 
 	fmt.Println("Welcome to Mango's Bank!")
 
@@ -38,6 +51,7 @@ func main() {
 			accountBalance += depositAmount
 			fmt.Println("Balance updated! New amount:", accountBalance)
 			newLine()
+			writeBalanceToFile(accountBalance)
 		case 3:
 			fmt.Print("Your withdrawal: ")
 			var withdrawalAmount float64
@@ -54,6 +68,7 @@ func main() {
 			}
 			accountBalance -= withdrawalAmount
 			fmt.Println("Balance updated! New amount:", accountBalance)
+			writeBalanceToFile(accountBalance)
 		default:
 			fmt.Println("Goodbye!")
 			fmt.Println("Thanks for choosing our bank!")
@@ -67,4 +82,28 @@ func main() {
 
 func newLine() {
 	fmt.Println("")
+}
+
+func writeBalanceToFile(balance float64) {
+	balanceText := fmt.Sprint(balance)
+	os.WriteFile(accountBalanceFile, []byte(balanceText), 0644) // 0644 is a way of encoding file permissions (read and write for owner only, other users can only read)
+}
+
+func getBalanceFromFile() (float64, error) {
+	data, err := os.ReadFile(accountBalanceFile)
+
+	// code to run when an error occurs
+	if err != nil {
+		return 1000, errors.New("Failed to find balance file!")
+	}
+	balanceText := string(data)
+	balance, err := strconv.ParseFloat(balanceText, 64)
+
+	// code to run when an error occurs
+	if err != nil {
+		return 1000, errors.New("Failed to parse stored balance value!")
+	}
+
+	// no error then return nil
+	return balance, nil
 }
