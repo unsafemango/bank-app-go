@@ -1,16 +1,16 @@
 package main
 
 import (
-	"errors"
 	"fmt"
-	"os"
-	"strconv"
+
+	"github.com/Pallinder/go-randomdata"
+	"unsafemango.com/bank-app/fileops"
 )
 
 const accountBalanceFile = "balance.txt"
 
 func main() {
-	var accountBalance, err = getBalanceFromFile()
+	var accountBalance, err = fileops.GetFloatFromFile(accountBalanceFile)
 
 	if err != nil {
 		fmt.Println("ERROR")
@@ -20,15 +20,12 @@ func main() {
 	}
 
 	fmt.Println("Welcome to Mango's Bank!")
+	fmt.Println("Reach us 24/7", randomdata.PhoneNumber())
+	newLine()
 
 	// for loop to execute the code indefinitely
 	for {
-		fmt.Println("What do you want to do?")
-		fmt.Println("1. Check Balance")
-		fmt.Println("2. Deposit Money")
-		fmt.Println("3. Withdraw Money")
-		fmt.Println("4. Exit")
-		newLine()
+		presentOptions()
 
 		var choice int
 		fmt.Print("Your choice: ")
@@ -52,7 +49,8 @@ func main() {
 			accountBalance += depositAmount
 			fmt.Println("Balance updated! New amount:", accountBalance)
 			newLine()
-			writeBalanceToFile(accountBalance)
+			fileops.WriteFloatToFile(accountBalanceFile, accountBalance)
+
 		case 3:
 			fmt.Print("Your withdrawal: ")
 			var withdrawalAmount float64
@@ -69,7 +67,7 @@ func main() {
 			}
 			accountBalance -= withdrawalAmount
 			fmt.Println("Balance updated! New amount:", accountBalance)
-			writeBalanceToFile(accountBalance)
+			fileops.WriteFloatToFile(accountBalanceFile, accountBalance)
 		default:
 			fmt.Println("Goodbye!")
 			fmt.Println("Thanks for choosing our bank!")
@@ -83,28 +81,4 @@ func main() {
 
 func newLine() {
 	fmt.Println("")
-}
-
-func writeBalanceToFile(balance float64) {
-	balanceText := fmt.Sprint(balance)
-	os.WriteFile(accountBalanceFile, []byte(balanceText), 0644) // 0644 is a way of encoding file permissions (read and write for owner only, other users can only read)
-}
-
-func getBalanceFromFile() (float64, error) {
-	data, err := os.ReadFile(accountBalanceFile)
-
-	// code to run when an error occurs
-	if err != nil {
-		return 1000, errors.New("Failed to find balance file!")
-	}
-	balanceText := string(data)
-	balance, err := strconv.ParseFloat(balanceText, 64)
-
-	// code to run when an error occurs
-	if err != nil {
-		return 1000, errors.New("Failed to parse stored balance value!")
-	}
-
-	// no error then return nil
-	return balance, nil
 }
